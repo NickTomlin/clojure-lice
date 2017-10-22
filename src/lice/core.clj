@@ -1,6 +1,7 @@
 (ns lice.core
   (:require [net.cgrand.enlive-html :as html]
             [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.json :refer [wrap-json-response]]
             [compojure.core :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]))
@@ -13,7 +14,7 @@
     (java.net.URL. (str "https://choosealicense.com/licenses/" license-name "/"))))
 
 (defn fetch-license [license-name]
-  (extract-text (request-license license-name)))
+  {:body { :text (extract-text (request-license license-name)) }})
 
 (defn exception-handler
   [handler]
@@ -25,10 +26,11 @@
         {:status 400 :body "Whoopsie. That didn't work"}))))
 
 (defroutes app-routes
-  (GET "/" [] "Hello!")
+  (GET "/" [] {:body { :message "Hello" }})
   (GET "/licenses/:name" [name] (fetch-license name))
   (route/not-found "That was not found...."))
 
 (def app
   (-> (handler/api app-routes)
+      wrap-json-response
       exception-handler))
