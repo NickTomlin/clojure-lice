@@ -9,4 +9,4 @@
                  [enlive "1.1.6"]
                  [compojure "1.6.0"]
                  [ring/ring-json "0.4.0"]]
-  :ring {:handler lice.core/app :port 8001})
+  :ring {:handler lice.core/app :port 8000})
